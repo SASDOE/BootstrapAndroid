@@ -44,10 +44,11 @@ public class ApiKeyProvider {
      * @throws IOException
      */
     public String getAuthKey(final Activity activity) throws AccountsException, IOException {
-        final AccountManagerFuture<Bundle> accountManagerFuture
-                = accountManager.getAuthTokenByFeatures(BOOTSTRAP_ACCOUNT_TYPE,
-                AUTHTOKEN_TYPE, new String[0], activity, null, null, null, null);
-
-        return accountManagerFuture.getResult().getString(KEY_AUTHTOKEN);
+//        final AccountManagerFuture<Bundle> accountManagerFuture
+//                = accountManager.getAuthTokenByFeatures(BOOTSTRAP_ACCOUNT_TYPE,
+//                AUTHTOKEN_TYPE, new String[0], activity, null, null, null, null);
+//
+//        return accountManagerFuture.getResult().getString(KEY_AUTHTOKEN);
+          return "Foo";
     }
 }
