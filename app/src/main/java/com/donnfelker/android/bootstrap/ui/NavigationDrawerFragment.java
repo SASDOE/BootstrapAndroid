@@ -17,13 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
+import com.donnfelker.android.bootstrap.core.Navigation;
 import com.donnfelker.android.bootstrap.events.NavItemSelectedEvent;
 import com.donnfelker.android.bootstrap.util.UIUtils;
+import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.squareup.otto.Bus;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -52,6 +58,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout drawerLayout;
     private ListView drawerListView;
+    private LinearLayout drawerLinearLayout;
     private View fragmentContainerView;
 
     private int currentSelectedPosition = 0;
@@ -96,23 +103,24 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        drawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        drawerLinearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        drawerListView = (ListView) drawerLinearLayout.findViewById(R.id.drawer_listview);
+//        drawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-        drawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[] {
-                        getString(R.string.title_home),
-                        getString(R.string.title_timer)
-                }));
+
+        List<Navigation> navigationList = Arrays.asList(
+                new Navigation(R.drawable.icon_events, "Events"),
+                new Navigation(R.drawable.icon_news, "News"),
+                new Navigation(R.drawable.icon_tv, "TV Guide"),
+                new Navigation(R.drawable.icon_video, "Video"));
+        drawerListView.setAdapter(new NavListAdapter(inflater, navigationList));
         drawerListView.setItemChecked(currentSelectedPosition, true);
-        return drawerListView;
+        return drawerLinearLayout;
     }
 
     public boolean isDrawerOpen() {

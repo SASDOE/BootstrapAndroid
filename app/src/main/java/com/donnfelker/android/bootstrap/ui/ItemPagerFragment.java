@@ -2,10 +2,13 @@
 package com.donnfelker.android.bootstrap.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,7 +42,7 @@ import java.util.List;
  *
  * @param <E>
  */
-public abstract class ItemListFragment<E> extends Fragment
+public abstract class ItemPagerFragment<E> extends Fragment
         implements LoaderCallbacks<List<E>> {
 
     private static final String FORCE_REFRESH = "forceRefresh";
@@ -61,7 +64,7 @@ public abstract class ItemListFragment<E> extends Fragment
     /**
      * List view
      */
-    protected ListView listView;
+    protected ViewPager viewPager;
 
     /**
      * Empty view
@@ -103,7 +106,7 @@ public abstract class ItemListFragment<E> extends Fragment
         listShown = false;
         emptyView = null;
         progressBar = null;
-        listView = null;
+        viewPager = null;
 
         super.onDestroyView();
     }
@@ -112,20 +115,20 @@ public abstract class ItemListFragment<E> extends Fragment
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listView = (ListView) view.findViewById(android.R.id.list);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                onListItemClick((ListView) parent, view, position, id);
-            }
-        });
+        viewPager = (ViewPager) view.findViewById(android.R.id.list);
+//        viewPager.setOnItemClickListener(new OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//                onListItemClick((ListView) parent, view, position, id);
+//            }
+//        });
         progressBar = (ProgressBar) view.findViewById(id.pb_loading);
 
         emptyView = (TextView) view.findViewById(android.R.id.empty);
 
-        configureList(getActivity(), getListView());
+        configureList(getActivity(), getViewPager());
     }
 
     /**
@@ -134,7 +137,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param activity
      * @param listView
      */
-    protected void configureList(final Activity activity, final ListView listView) {
+    protected void configureList(final Activity activity, final ViewPager listView) {
         listView.setAdapter(createAdapter());
     }
 
@@ -239,10 +242,9 @@ public abstract class ItemListFragment<E> extends Fragment
      *
      * @return adapter
      */
-    protected HeaderFooterListAdapter<SingleTypeAdapter<E>> createAdapter() {
-        final SingleTypeAdapter<E> wrapped = createAdapter(items);
-        return new HeaderFooterListAdapter<SingleTypeAdapter<E>>(getListView(),
-                wrapped);
+    protected PagerAdapter createAdapter() {
+        final PagerAdapter wrapped = createAdapter(items);
+        return wrapped;
     }
 
     /**
@@ -251,7 +253,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param items
      * @return adapter
      */
-    protected abstract SingleTypeAdapter<E> createAdapter(final List<E> items);
+    protected abstract PagerAdapter createAdapter(final List<E> items);
 
     /**
      * Set the list to be shown
@@ -303,8 +305,8 @@ public abstract class ItemListFragment<E> extends Fragment
      *
      * @return viewPager
      */
-    public ListView getListView() {
-        return listView;
+    public ViewPager getViewPager() {
+        return viewPager;
     }
 
     /**
@@ -313,9 +315,9 @@ public abstract class ItemListFragment<E> extends Fragment
      * @return list adapter
      */
     @SuppressWarnings("unchecked")
-    protected HeaderFooterListAdapter<SingleTypeAdapter<E>> getListAdapter() {
-        if (listView != null) {
-            return (HeaderFooterListAdapter<SingleTypeAdapter<E>>) listView
+    protected PagerAdapter getListAdapter() {
+        if (viewPager != null) {
+            return viewPager
                     .getAdapter();
         }
         return null;
@@ -327,14 +329,14 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param adapter
      * @return this fragment
      */
-    protected ItemListFragment<E> setListAdapter(final ListAdapter adapter) {
-        if (listView != null) {
-            listView.setAdapter(adapter);
+    protected ItemPagerFragment<E> setListAdapter(final PagerAdapter adapter) {
+        if (viewPager != null) {
+            viewPager.setAdapter(adapter);
         }
         return this;
     }
 
-    private ItemListFragment<E> fadeIn(final View view, final boolean animate) {
+    private ItemPagerFragment<E> fadeIn(final View view, final boolean animate) {
         if (view != null) {
             if (animate) {
                 view.startAnimation(AnimationUtils.loadAnimation(getActivity(),
@@ -346,12 +348,12 @@ public abstract class ItemListFragment<E> extends Fragment
         return this;
     }
 
-    private ItemListFragment<E> show(final View view) {
+    private ItemPagerFragment<E> show(final View view) {
         ViewUtils.setGone(view, false);
         return this;
     }
 
-    private ItemListFragment<E> hide(final View view) {
+    private ItemPagerFragment<E> hide(final View view) {
         ViewUtils.setGone(view, true);
         return this;
     }
@@ -362,7 +364,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param shown
      * @return this fragment
      */
-    public ItemListFragment<E> setListShown(final boolean shown) {
+    public ItemPagerFragment<E> setListShown(final boolean shown) {
         return setListShown(shown, true);
     }
 
@@ -373,7 +375,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param animate
      * @return this fragment
      */
-    public ItemListFragment<E> setListShown(final boolean shown, final boolean animate) {
+    public ItemPagerFragment<E> setListShown(final boolean shown, final boolean animate) {
         if (!isUsable()) {
             return this;
         }
@@ -383,9 +385,9 @@ public abstract class ItemListFragment<E> extends Fragment
                 // List has already been shown so hide/show the empty view with
                 // no fade effect
                 if (items.isEmpty()) {
-                    hide(listView).show(emptyView);
+                    hide(viewPager).show(emptyView);
                 } else {
-                    hide(emptyView).show(listView);
+                    hide(emptyView).show(viewPager);
                 }
             }
             return this;
@@ -395,14 +397,14 @@ public abstract class ItemListFragment<E> extends Fragment
 
         if (shown) {
             if (!items.isEmpty()) {
-                hide(progressBar).hide(emptyView).fadeIn(listView, animate)
-                        .show(listView);
+                hide(progressBar).hide(emptyView).fadeIn(viewPager, animate)
+                        .show(viewPager);
             } else {
-                hide(progressBar).hide(listView).fadeIn(emptyView, animate)
+                hide(progressBar).hide(viewPager).fadeIn(emptyView, animate)
                         .show(emptyView);
             }
         } else {
-            hide(listView).hide(emptyView).fadeIn(progressBar, animate)
+            hide(viewPager).hide(emptyView).fadeIn(progressBar, animate)
                     .show(progressBar);
         }
         return this;
@@ -414,7 +416,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param message
      * @return this fragment
      */
-    protected ItemListFragment<E> setEmptyText(final String message) {
+    protected ItemPagerFragment<E> setEmptyText(final String message) {
         if (emptyView != null) {
             emptyView.setText(message);
         }
@@ -427,7 +429,7 @@ public abstract class ItemListFragment<E> extends Fragment
      * @param resId
      * @return this fragment
      */
-    protected ItemListFragment<E> setEmptyText(final int resId) {
+    protected ItemPagerFragment<E> setEmptyText(final int resId) {
         if (emptyView != null) {
             emptyView.setText(resId);
         }

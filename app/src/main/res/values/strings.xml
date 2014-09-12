@@ -2,7 +2,7 @@
 
 <resources>
 
-    <string name="app_name">Android Bootstrap</string>
+    <string name="app_name">SPS</string>
     <string name="content_column">Content</string>
     <string name="page_referrers">Referrers</string>
     <string name="refresh_action">Refresh</string>
@@ -44,5 +44,9 @@
     <string name="navigation_drawer_close">Drawer Close</string>
     <string name="title_home">Home</string>
 
-
+    <string name="title_events">Events</string>
+    <string name="title_news">News</string>
+    <string name="title_tvguide">TV Guide</string>
+    <string name="title_video">Video</string>
+    <string name="hint_search">Search</string>
 </resources>
