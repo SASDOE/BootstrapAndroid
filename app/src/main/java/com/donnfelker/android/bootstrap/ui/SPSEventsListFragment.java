@@ -64,21 +64,18 @@ public class SPSEventsListFragment extends ItemPagerFragment<SPSEvent> {
 
             @Override
             public List<SPSEvent> loadData() throws Exception {
-//                    try {
+                    try {
                 if (getActivity() != null) {
-                    return Arrays.asList(new SPSEvent("UFC Fight Night", R.drawable.ex1),
-                            new SPSEvent("UFC Fight Night", R.drawable.ex2),
-                            new SPSEvent("UFC Fight Night", R.drawable.ex3));
+                    return serviceProvider.getService(getActivity()).getEvents();
                 } else {
                     return Collections.emptyList();
                 }
-
-//                    } catch (OperationCanceledException e) {
-//                        Activity activity = getActivity();
-//                        if (activity != null)
-//                            activity.finish();
-//                        return initialItems;
-//                    }
+                    } catch (OperationCanceledException e) {
+                        Activity activity = getActivity();
+                        if (activity != null)
+                            activity.finish();
+                        return initialItems;
+                    }
             }
         };
     }
@@ -132,6 +129,7 @@ public class SPSEventsListFragment extends ItemPagerFragment<SPSEvent> {
         pager.setAdapter(new BootstrapPagerAdapter(getResources(), getChildFragmentManager()));
 //        indicator.setViewPager(pager);
         pager.setPageMargin(-300);
+        pager.setOffscreenPageLimit(2);
 //        pager.setCurrentItem(1);
         pager.setPageTransformer(true, new DepthPageTransformer());
 

@@ -17,19 +17,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleExpandableListAdapter;
 
 import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
+import com.donnfelker.android.bootstrap.core.Category;
 import com.donnfelker.android.bootstrap.core.Navigation;
 import com.donnfelker.android.bootstrap.events.NavItemSelectedEvent;
 import com.donnfelker.android.bootstrap.util.UIUtils;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.squareup.otto.Bus;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -38,7 +44,7 @@ import javax.inject.Inject;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements ExpandableListView.OnChildClickListener {
 
     /**
      * Remember the position of the selected item.
@@ -57,7 +63,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ActionBarDrawerToggle drawerToggle;
 
     private DrawerLayout drawerLayout;
-    private ListView drawerListView;
+    private ExpandableListView drawerListView;
     private LinearLayout drawerLinearLayout;
     private View fragmentContainerView;
 
@@ -104,22 +110,26 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         drawerLinearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        drawerListView = (ListView) drawerLinearLayout.findViewById(R.id.drawer_listview);
-//        drawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
-        });
-
+        drawerListView = (ExpandableListView) drawerLinearLayout.findViewById(R.id.drawer_listview);
         List<Navigation> navigationList = Arrays.asList(
-                new Navigation(R.drawable.icon_events, "Events"),
-                new Navigation(R.drawable.icon_news, "News"),
+                new Navigation(R.drawable.icon_events, "Events", Arrays.asList(
+                        new Category("category 11"),
+                        new Category("category 12"),
+                        new Category("category 13")
+                        )),
+                new Navigation(R.drawable.icon_news, "News", Arrays.asList(
+                        new Category("category 21"),
+                        new Category("category 22"),
+                        new Category("category 23")
+                )),
                 new Navigation(R.drawable.icon_tv, "TV Guide"),
-                new Navigation(R.drawable.icon_video, "Video"));
-        drawerListView.setAdapter(new NavListAdapter(inflater, navigationList));
-        drawerListView.setItemChecked(currentSelectedPosition, true);
+                new Navigation(R.drawable.icon_video, "Video", Arrays.asList(
+                        new Category("category 41"),
+                        new Category("category 42"),
+                        new Category("category 43")
+                )));
+        drawerListView.setAdapter(CategoryExpandableListAdapter.newExpandableListAdapter(getActivity(), navigationList));
+        drawerListView.setOnChildClickListener(this);
         return drawerLinearLayout;
     }
 
@@ -272,4 +282,9 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
 
+    @Override
+    public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
+        selectItem(groupPosition);
+        return true;
+    }
 }

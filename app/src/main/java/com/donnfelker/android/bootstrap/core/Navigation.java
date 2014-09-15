@@ -1,5 +1,6 @@
 package com.donnfelker.android.bootstrap.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,11 +9,17 @@ import java.util.List;
 public class Navigation {
     int imageId;
     String text;
-    List<Category> categories;
+    List<Category> categories = new ArrayList<Category>();
 
     public Navigation(int imageId, String text) {
         this.imageId = imageId;
         this.text = text;
+    }
+
+    public Navigation(int imageId, String text, List<Category> categories) {
+        this.imageId = imageId;
+        this.text = text;
+        this.categories = categories;
     }
 
     public List<Category> getCategories() {

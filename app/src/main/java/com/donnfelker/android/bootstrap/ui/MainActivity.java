@@ -201,14 +201,24 @@ public class MainActivity extends BootstrapFragmentActivity {
         Ln.d("Selected: %1$s", event.getItemPosition());
 
         switch(event.getItemPosition()) {
-            case 0:
-                // Home
-                // do nothing as we're already on the home screen.
+            case 0: {
+                final FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new SPSEventsListFragment())
+                        .commit();
                 break;
-            case 1:
-                // Timer
+            }
+            case 1: {
+                final FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new NewsListFragment())
+                        .commit();
+                break;
+            }
+            case 2: {
                 navigateToTimer();
                 break;
+            }
         }
     }
 }
