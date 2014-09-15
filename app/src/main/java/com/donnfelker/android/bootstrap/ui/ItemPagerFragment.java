@@ -2,7 +2,6 @@
 package com.donnfelker.android.bootstrap.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -17,9 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,7 +24,6 @@ import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.R.id;
 import com.donnfelker.android.bootstrap.R.layout;
 import com.donnfelker.android.bootstrap.authenticator.LogoutService;
-import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.github.kevinsawicki.wishlist.Toaster;
 import com.github.kevinsawicki.wishlist.ViewUtils;
 
@@ -115,7 +110,7 @@ public abstract class ItemPagerFragment<E> extends Fragment
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewPager = (ViewPager) view.findViewById(android.R.id.list);
+        viewPager = (ViewPager) view.findViewById(id.vp_pages);
 //        viewPager.setOnItemClickListener(new OnItemClickListener() {
 //
 //            @Override
@@ -135,10 +130,10 @@ public abstract class ItemPagerFragment<E> extends Fragment
      * Configure list after view has been created
      *
      * @param activity
-     * @param listView
+     * @param viewPager
      */
-    protected void configureList(final Activity activity, final ViewPager listView) {
-        listView.setAdapter(createAdapter());
+    protected void configureList(final Activity activity, final ViewPager viewPager) {
+        viewPager.setAdapter(createAdapter());
     }
 
     @Override
@@ -233,7 +228,7 @@ public abstract class ItemPagerFragment<E> extends Fragment
         }
 
         this.items = items;
-        getListAdapter().getWrappedAdapter().setItems(items.toArray());
+        getPagerAdapter().setItems(items);
         showList();
     }
 
@@ -314,11 +309,16 @@ public abstract class ItemPagerFragment<E> extends Fragment
      *
      * @return list adapter
      */
+    MPagerAdapter mPagerAdapter;
+
     @SuppressWarnings("unchecked")
-    protected PagerAdapter getListAdapter() {
+    protected MPagerAdapter getPagerAdapter() {
+        if (mPagerAdapter == null) {
+             mPagerAdapter = (MPagerAdapter)createAdapter();
+        }
         if (viewPager != null) {
-            return viewPager
-                    .getAdapter();
+            viewPager.setAdapter(mPagerAdapter);
+            return mPagerAdapter;
         }
         return null;
     }
@@ -329,7 +329,7 @@ public abstract class ItemPagerFragment<E> extends Fragment
      * @param adapter
      * @return this fragment
      */
-    protected ItemPagerFragment<E> setListAdapter(final PagerAdapter adapter) {
+    protected ItemPagerFragment<E> setPagerAdapter(final PagerAdapter adapter) {
         if (viewPager != null) {
             viewPager.setAdapter(adapter);
         }
@@ -434,18 +434,6 @@ public abstract class ItemPagerFragment<E> extends Fragment
             emptyView.setText(resId);
         }
         return this;
-    }
-
-    /**
-     * Callback when a list view item is clicked
-     *
-     * @param l
-     * @param v
-     * @param position
-     * @param id
-     */
-    public void onListItemClick(final ListView l, final View v,
-                                final int position, final long id) {
     }
 
     /**

@@ -137,7 +137,7 @@ public class MainActivity extends BootstrapFragmentActivity {
             Ln.d("Foo");
             final FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, new CarouselFragment())
+                    .replace(R.id.container, new SPSEventsListFragment())
                     .commit();
         }
 

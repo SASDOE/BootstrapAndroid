@@ -19,6 +19,7 @@ import com.donnfelker.android.bootstrap.ui.MainActivity;
 import com.donnfelker.android.bootstrap.ui.NavigationDrawerFragment;
 import com.donnfelker.android.bootstrap.ui.NewsActivity;
 import com.donnfelker.android.bootstrap.ui.NewsListFragment;
+import com.donnfelker.android.bootstrap.ui.SPSEventsListFragment;
 import com.donnfelker.android.bootstrap.ui.UserActivity;
 import com.donnfelker.android.bootstrap.ui.UserListFragment;
 import com.google.gson.Gson;
@@ -48,6 +49,7 @@ import retrofit.converter.GsonConverter;
                 NavigationDrawerFragment.class,
                 NewsActivity.class,
                 NewsListFragment.class,
+                SPSEventsListFragment.class,
                 UserActivity.class,
                 UserListFragment.class,
                 TimerService.class

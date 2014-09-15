@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:hint="@string/hint_search"
         />
-    <ListView
+    <ExpandableListView
         android:id="@+id/drawer_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -18,8 +18,8 @@ import butterknife.Views;
  */
 public class CarouselFragment extends Fragment {
 
-    @InjectView(R.id.tpi_header)
-    protected TitlePageIndicator indicator;
+//    @InjectView(R.id.tpi_header)
+//    protected TitlePageIndicator indicator;
 
     @InjectView(R.id.vp_pages)
     protected ViewPager pager;
@@ -36,7 +36,7 @@ public class CarouselFragment extends Fragment {
         Views.inject(this, getView());
 
         pager.setAdapter(new BootstrapPagerAdapter(getResources(), getChildFragmentManager()));
-        indicator.setViewPager(pager);
+//        indicator.setViewPager(pager);
         pager.setCurrentItem(1);
 
     }
