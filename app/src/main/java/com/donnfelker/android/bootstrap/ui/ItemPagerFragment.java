@@ -154,12 +154,12 @@ public abstract class ItemPagerFragment<E> extends Fragment
             return false;
         }
         switch (item.getItemId()) {
-            case id.refresh:
-                forceRefresh();
-                return true;
-            case R.id.logout:
-                logout();
-                return true;
+//            case id.refresh:
+//                forceRefresh();
+//                return true;
+//            case R.id.logout:
+//                logout();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -9,8 +9,8 @@
     </style>
 
     <style name="Widget.Styled.ActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="background">@drawable/actionbar_background</item>
-        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="background">@color/actionbar_background_colour</item>
+        <item name="android:background">@color/actionbar_background_colour</item>
     </style>
 
 </resources>

@@ -7,7 +7,7 @@ import java.util.List;
  * Created by tulga on 9/10/14.
  */
 public class Navigation {
-    int imageId;
+    Integer imageId;
     String text;
     List<Category> categories = new ArrayList<Category>();
 
@@ -30,7 +30,7 @@ public class Navigation {
         this.categories = categories;
     }
 
-    public int getImageId() {
+    public Integer getImageId() {
         return imageId;
     }
 

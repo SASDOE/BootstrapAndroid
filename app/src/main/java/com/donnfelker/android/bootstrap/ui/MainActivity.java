@@ -5,6 +5,7 @@ package com.donnfelker.android.bootstrap.ui;
 import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
@@ -76,12 +77,14 @@ public class MainActivity extends BootstrapFragmentActivity {
                 /** Called when a drawer has settled in a completely closed state. */
                 public void onDrawerClosed(View view) {
                     getSupportActionBar().setTitle(title);
+                    navigationDrawerFragment.refreshActionBarTitle();
                     supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 }
 
                 /** Called when a drawer has settled in a completely open state. */
                 public void onDrawerOpened(View drawerView) {
                     getSupportActionBar().setTitle(drawerTitle);
+                    navigationDrawerFragment.refreshActionBarTitle();
                     supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 }
             };
@@ -99,9 +102,14 @@ public class MainActivity extends BootstrapFragmentActivity {
         }
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.actionbar);
+        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         checkAuth();
 
@@ -182,9 +190,9 @@ public class MainActivity extends BootstrapFragmentActivity {
             case android.R.id.home:
                 //menuDrawer.toggleMenu();
                 return true;
-            case R.id.timer:
-                navigateToTimer();
-                return true;
+//            case R.id.timer:
+//                navigateToTimer();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

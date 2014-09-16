@@ -1,8 +1,8 @@
 package com.donnfelker.android.bootstrap.ui;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -15,12 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 
 import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
@@ -28,14 +25,10 @@ import com.donnfelker.android.bootstrap.core.Category;
 import com.donnfelker.android.bootstrap.core.Navigation;
 import com.donnfelker.android.bootstrap.events.NavItemSelectedEvent;
 import com.donnfelker.android.bootstrap.util.UIUtils;
-import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.squareup.otto.Bus;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -66,6 +59,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
     private ExpandableListView drawerListView;
     private LinearLayout drawerLinearLayout;
     private View fragmentContainerView;
+
+    private List<Navigation> navigationList = null;
 
     private int currentSelectedPosition = 0;
     private boolean fromSavedInstanceState;
@@ -111,7 +106,7 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                              Bundle savedInstanceState) {
         drawerLinearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         drawerListView = (ExpandableListView) drawerLinearLayout.findViewById(R.id.drawer_listview);
-        List<Navigation> navigationList = Arrays.asList(
+        navigationList = Arrays.asList(
                 new Navigation(R.drawable.icon_events, "Events", Arrays.asList(
                         new Category("category 11"),
                         new Category("category 12"),
@@ -130,6 +125,16 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 )));
         drawerListView.setAdapter(CategoryExpandableListAdapter.newExpandableListAdapter(getActivity(), navigationList));
         drawerListView.setOnChildClickListener(this);
+        drawerListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousGroup = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if(groupPosition != previousGroup)
+                    drawerListView.collapseGroup(previousGroup);
+                previousGroup = groupPosition;
+            }
+        });
         return drawerLinearLayout;
     }
 
@@ -170,7 +175,9 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
                 if (!isAdded()) {
                     return;
                 }
-
+                if (navigationList != null)
+                    getActionBar().setTitle(navigationList.get(currentSelectedPosition).getText());
+                refreshActionBarTitle();
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
@@ -217,10 +224,8 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
         if (drawerLayout != null) {
             drawerLayout.closeDrawer(fragmentContainerView);
         }
-
         // Fire the event off to the bus which.
         bus.post(new NavItemSelectedEvent(position));
-
     }
 
     @Override
@@ -272,9 +277,23 @@ public class NavigationDrawerFragment extends Fragment implements ExpandableList
      */
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setTitle(R.string.app_name);
+        refreshActionBarTitle();
+    }
+
+    public void refreshActionBarTitle() {
+        View view = null;
+        if (getActionBar() != null && (view = getActionBar().getCustomView()) != null) {
+            CharSequence testRemoveMe = getActionBar().getTitle();
+            TextView actionBarTitle = (TextView) view.findViewById(R.id.actionbar_title);
+            actionBarTitle.setText(getActionBar().getTitle());
+        }
     }
 
     private ActionBar getActionBar() {
